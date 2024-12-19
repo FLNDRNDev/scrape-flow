@@ -16,15 +16,19 @@ export async function POST(request: Request) {
 
     switch (event.type) {
       case "checkout.session.completed":
-        HandleCheckoutSessionCompleted(event.data.object);
+        await HandleCheckoutSessionCompleted(event.data.object);
         break;
       default:
+        console.log(`Unhandled event type: ${event.type}`);
         break;
     }
 
     return new NextResponse(null, { status: 200 });
   } catch (error) {
     console.error("stripe webhook error", error);
-    return new NextResponse("webhook error", { status: 400 });
+    return new NextResponse(
+      `Webhook Error: ${error instanceof Error ? error.message : 'Unknown Error'}`, 
+      { status: 400 }
+    );
   }
 }
